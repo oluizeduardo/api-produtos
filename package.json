@@ -4,7 +4,6 @@
   "description": "API de produtos desenvolvida em NodeJS. PUC Minas",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +18,6 @@
   },
   "homepage": "https://github.com/oluizeduardo/api-produtos#readme",
   "dependencies": {
-    "express": "^4.18.1",
-    "nodemon": "^2.0.19"
+    "express": "^4.18.1"
   }
 }
