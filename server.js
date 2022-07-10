@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 
-app.listen(3000, function () {
-    console.log('Servidor rodando na porta 3000');
-})
+const port = process.env.PORT || 3000;
+
+app.listen(port, function () {
+    console.log(`Servidor rodando na porta ${port}`);
+});
 
 app.use(express.json());
 
@@ -16,6 +18,14 @@ const dataSource = {
         { id: 5, descricao: "Nescau 400gr", valor: 8.00, marca: "Nestlé"  }
     ]
 }
+
+
+// Request log.
+app.get('*', function(req, res, next){
+    console.log(new Date().toLocaleString(), req.method, req.path );
+    next();
+})
+
 
 // Post a new product.
 app.post('/produtos', function (req, res) {    
