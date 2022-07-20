@@ -4,18 +4,18 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.listen(port, function () {
-    console.log(`Servidor rodando na porta ${port}`);
+    console.log(`Server running at ${port}`);
 });
 
 app.use(express.json());
 
 const dataSource = {
-    produtos: [
-        { id: 1, descricao: "Arroz parboilizado 5Kg", valor: 25.00, marca: "Tio João"  },
-        { id: 2, descricao: "Maionese 250gr", valor: 7.20, marca: "Helmans"  },
-        { id: 3, descricao: "Iogurte Natural 200ml", valor: 2.50, marca: "Itambé"  },
-        { id: 4, descricao: "Batata Maior Palha 300gr", valor: 15.20, marca: "Chipps"  },
-        { id: 5, descricao: "Nescau 400gr", valor: 8.00, marca: "Nestlé"  }
+    products: [
+        { id: 1, description: "Arroz parboilizado 5Kg", value: 25.00, brand: "Tio João"  },
+        { id: 2, description: "Maionese 250gr", value: 7.20, brand: "Helmans"  },
+        { id: 3, description: "Iogurte Natural 200ml", value: 2.50, brand: "Itambis"  },
+        { id: 4, description: "Batata Maior Palha 300gr", value: 15.20, brand: "Chipps"  },
+        { id: 5, description: "Nescau 400gr", value: 8.00, brand: "Nestlis"  }
     ]
 }
 
@@ -28,41 +28,41 @@ app.get('*', function(req, res, next){
 
 
 // Post a new product.
-app.post('/produtos', function (req, res) {    
+app.post('/products', function (req, res) {    
 
     if(validateBodyFields(req, res)){
-        dataSource.produtos.push(req.body);
+        dataSource.products.push(req.body);
 
         res.status(200)
             .json({
-                message: "Novo produto adicionado!",
-                produto: req.body
+                message: "New product added!",
+                product: req.body
             });
     }
 })
 
 
 // Get all products.
-app.get('/produtos', function (req, res) {
+app.get('/products', function (req, res) {
     res.json(dataSource);
 })
 
 
 // Get a product based on its id.
-app.get('/produtos/:id', function (req, res) {
+app.get('/products/:id', function (req, res) {
     let id = convertTextToInt(req.params.id);
     let idx = getArrayIdByProductId(id);
 
     if(idx > -1){
         res.json(getProductFromList(idx));
     }else{
-        treatResponse(res, 404, "Produto não encontrado!");
+        treatResponse(res, 404, `Product with id ${id} was not found!`);
     }
 })
 
 
 // Update a product based on its id.
-app.put('/produtos/:id', function (req, res) {
+app.put('/products/:id', function (req, res) {
     let id = convertTextToInt(req.params.id);
     let idx = getArrayIdByProductId(id);
 
@@ -70,21 +70,21 @@ app.put('/produtos/:id', function (req, res) {
         let product = getProductFromList(idx);        
 
         product.id = id;
-        product.descricao = req.body.descricao;
-        product.valor = req.body.valor;
-        product.marca = req.body.marca;
+        product.description = req.body.description;
+        product.value = req.body.value;
+        product.brand = req.body.brand;
 
         res.status(200)
             .json({
-                message: "Produto atualizado com sucesso",
-                produto: product
+                message: `The product ${id} has been updated.`,
+                product: product
             });
     }
 })
 
 
 // Delete a product based on its id.
-app.delete('/produtos/:id', function (req, res) {
+app.delete('/products/:id', function (req, res) {
     let id = convertTextToInt(req.params.id);
     let idx = getArrayIdByProductId(id);
 
@@ -92,29 +92,29 @@ app.delete('/produtos/:id', function (req, res) {
 
         const deletedProduct = removeProductFromList(idx);
 
-        res.json({message : "Produto removido.",
+        res.json({message : `The product ${id} has been deleted.`,
                   produto : deletedProduct});
     }else{
-        treatResponse(res, 404, "Produto não encontrado!");
+        treatResponse(res, 404, `Product with id ${id} was not found!`);
     }
 })
 
 
 function validateBodyFields(req, res){
     if(!req.body.id){
-        treatResponse(res, 400, "Bad request! Campo 'id' é obrigatório.");
+        treatResponse(res, 400, "Bad request! Field 'id' is required.");
         return false;
     }else{
-        if(!req.body.descricao){
-            treatResponse(res, 400, "Bad request! Campo 'descricao' é obrigatório.");
+        if(!req.body.description){
+            treatResponse(res, 400, "Bad request! Field 'description' is required.");
             return false;
         }else{
-            if(!req.body.valor){
-                treatResponse(res, 400, "Bad request! Campo 'valor' é obrigatório.");
+            if(!req.body.value){
+                treatResponse(res, 400, "Bad request! Field 'value' is required.");
                 return false;
             }else{
-                if(!req.body.marca){
-                    treatResponse(res, 400, "Bad request! Campo 'marca' é obrigatório.");
+                if(!req.body.brand){
+                    treatResponse(res, 400, "Bad request! Field 'brand' is required.");
                     return false;
                 }else{
                     return true;
@@ -129,15 +129,15 @@ function convertTextToInt(text){
 }
 
 function getArrayIdByProductId(id){
-    return dataSource.produtos.findIndex(element => element.id == id);
+    return dataSource.products.findIndex(element => element.id == id);
 }
 
 function getProductFromList(index){
-    return dataSource.produtos[index];
+    return dataSource.products[index];
 }
 
 function removeProductFromList(index){
-    return dataSource.produtos.splice(index, 1);
+    return dataSource.products.splice(index, 1);
 }
 
 function treatResponse(res, returnCode, message){
